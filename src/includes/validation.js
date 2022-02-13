@@ -1,8 +1,15 @@
 import {
-  Form as VeeForm, Field as VeeField, defineRule, ErrorMessage,
+  Form as VeeForm,
+  Field as VeeField,
+  defineRule,
+  ErrorMessage,
+  configure,
 } from 'vee-validate';
 import {
-  required, min, max, alpha_spaces as alphaSpaces,
+  required,
+  min,
+  max,
+  alpha_spaces as alphaSpaces,
 } from '@vee-validate/rules';
 
 export default {
@@ -15,5 +22,25 @@ export default {
     defineRule('min', min);
     defineRule('max', max);
     defineRule('alpha_spaces', alphaSpaces);
+
+    configure({
+      generateMessage: (context) => {
+        const messages = {
+          required: `The field ${context.field} is required.`,
+          min: `The field ${context.field} is too short.`,
+          max: `The field ${context.field} is too long.`,
+          alpha_spaces: `The field ${context.field} may only contain alphabetical characters and spaces.`,
+        };
+
+        return (
+          messages[context.rule.name] ??
+          `The field ${context.field} is invalid.`
+        );
+      },
+      validateOnBlur: true,
+      validateOnChange: true,
+      validateOnInput: false,
+      validateOnModelUpdate: true,
+    });
   },
 };
